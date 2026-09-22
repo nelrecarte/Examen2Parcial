@@ -1,6 +1,45 @@
 @Backend_HostAddress = http://localhost:5162
+@token = pega_aqui_el_token
 
-GET {{Backend_HostAddress}}/weatherforecast/
-Accept: application/json
+POST {{Backend_HostAddress}}/api/Auth/register
+Content-Type: application/json
+
+{
+  "name": "Usuario Prueba",
+  "email": "prueba@correo.com",
+  "password": "123456"
+}
+
+###
+
+POST {{Backend_HostAddress}}/api/Auth/login
+Content-Type: application/json
+
+{
+  "email": "prueba@correo.com",
+  "password": "123456"
+}
+
+###
+
+POST {{Backend_HostAddress}}/api/Task
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "title": "Entregar informe mensual",
+  "priorityLevel": 2,
+  "notes": "Antes del viernes"
+}
+
+###
+
+GET {{Backend_HostAddress}}/api/Task
+Authorization: Bearer {{token}}
+
+###
+
+DELETE {{Backend_HostAddress}}/api/Task/id_de_la_tarea
+Authorization: Bearer {{token}}
 
 ###

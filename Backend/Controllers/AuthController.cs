@@ -1,20 +1,45 @@
+using Backend.DTOs;
+using Backend.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Backend.Controllers
-{
-    [Route("api/[controller]")]
-    [ApiController]
-    public class AuthController : ControllerBase
-    {
-        [HttpPost("register")]
-        public IActionResult Register([FromBody] RegisterDto registerDto)
-        {
-            if (string.IsNullOrEmpty(registerDto.Email) || string.IsNullOrEmpty(registerDto.Password))
-            {
-                return BadRequest(new { message = "El correo y la contraseña son obligatorios." });
-            }
+namespace Backend.Controllers;
 
-            return Ok(new { message = $"Usuario {registerDto.Name} registrado exitosamente." });
+[ApiController]
+[Route("api/[controller]")]
+public class AuthController : ControllerBase
+{
+    private readonly AuthService _authService;
+
+    public AuthController(AuthService authService)
+    {
+        _authService = authService;
+    }
+
+    [HttpPost("register")]
+    public async Task<IActionResult> Register([FromBody] RegisterDto dto)
+    {
+        try
+        {
+            var user = await _authService.Register(dto);
+            return Ok(new { user.Id, user.Name, user.Email });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+
+    [HttpPost("login")]
+    public async Task<IActionResult> Login([FromBody] LoginDto dto)
+    {
+        try
+        {
+            var token = await _authService.Login(dto);
+            return Ok(new AuthResponseDTO { Token = token });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { message = ex.Message });
         }
     }
 }
