@@ -3,7 +3,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
-
+builder.Services.AddControllers(); // <-- Agrega esta línea para habilitar los controladores
+builder.Services.AddScoped<IAuthService, AuthService>(); // <-- Registra tu servicio de auth
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -32,7 +33,7 @@ app.MapGet("/weatherforecast", () =>
     return forecast;
 })
 .WithName("GetWeatherForecast");
-
+app.MapControllers();
 app.Run();
 
 record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
