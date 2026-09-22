@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Backend.DTOs;
@@ -14,7 +15,6 @@ public class TaskController : ControllerBase
     private readonly TaskService _taskService;
 
     public TaskController(TaskService taskService) => _taskService = taskService;
-    
 
     // POST: api/Task
     [HttpPost]
@@ -22,14 +22,12 @@ public class TaskController : ControllerBase
     {
         try
         {
-            var userId = User.GetUserId();
+            var userId = GetUserId();
 
             if (string.IsNullOrEmpty(userId))
             {
                 return Unauthorized();
             }
-            
-        
             var task = await _taskService.Create(dto, userId);
             return Ok(task);
         }
